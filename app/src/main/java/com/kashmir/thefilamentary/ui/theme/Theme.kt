@@ -10,34 +10,47 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Mint600,
+    onPrimary = Color.White,
+    primaryContainer = Mint700,
+    onPrimaryContainer = Color.White,
+    secondary = Mint700,
+    onSecondary = Color.White,
+    secondaryContainer = Mint900,
+    onSecondaryContainer = Color.White,
+    tertiary = Mint700,
+    background = Color(0xFF101314),
+    surface = Color(0xFF121517),
+    onBackground = Color(0xFFE6E9EB),
+    onSurface = Color(0xFFE6E9EB),
+    outline = NeutralOutline
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = Mint600,
     onPrimary = Color.White,
+    primaryContainer = Mint100,
+    onPrimaryContainer = Mint900,
+    secondary = Mint700,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    secondaryContainer = Mint100,
+    onSecondaryContainer = Mint900,
+    tertiary = Mint700,
+    background = Color.White,
+    surface = NeutralSurface,
+    onBackground = Color(0xFF111314),
+    onSurface = Color(0xFF111314),
+    outline = NeutralOutline
 )
 
 @Composable
 fun TheFilamentaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Fix palette to mint aesthetic; disable dynamic to match provided screenshot
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -45,7 +58,6 @@ fun TheFilamentaryTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
@@ -53,6 +65,7 @@ fun TheFilamentaryTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

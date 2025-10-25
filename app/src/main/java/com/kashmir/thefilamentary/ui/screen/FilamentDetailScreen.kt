@@ -57,7 +57,7 @@ fun FilamentDetailScreen(
     
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { 
                     Text(filament?.let { "${it.brand} ${it.material}" } ?: "Filament Details") 
                 },
@@ -124,10 +124,23 @@ fun FilamentDetailScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        val progress = (filament.currentWeightGrams.toFloat() / filament.initialWeightGrams.toFloat()).coerceIn(0f, 1f)
+                        LinearProgressIndicator(
+                            progress = progress,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "${filament.currentWeightGrams} g remaining    ${filament.initialWeightGrams} g",
+                            style = MaterialTheme.typography.bodySmall
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         
                         // Update weight button
-                        Button(
+                        FilledTonalButton(
                             onClick = { 
                                 newWeight = filament.currentWeightGrams.toString()
                                 showWeightDialog = true 
@@ -154,7 +167,7 @@ fun FilamentDetailScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No print logs yet.\nTap the + button to add one.",
+                            text = "No print logs yet. Tap + to add.",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

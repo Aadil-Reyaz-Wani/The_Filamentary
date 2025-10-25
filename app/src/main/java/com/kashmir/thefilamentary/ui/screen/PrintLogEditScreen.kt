@@ -81,7 +81,7 @@ fun PrintLogEditScreen(
     
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
@@ -166,17 +166,17 @@ fun PrintLogEditScreen(
             )
             
             // Image Selection
-            Text("Print Result Image (optional)")
+            Text("Upload Photo")
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Button(
+                OutlinedButton(
                     onClick = { imagePicker.launch("image/*") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Select Image")
+                    Text("Upload Photo")
                 }
             }
             
@@ -207,7 +207,7 @@ fun PrintLogEditScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            Button(
+            FilledTonalButton(
                 onClick = { 
                     viewModel.savePrintLog(
                         context = context,
@@ -220,10 +220,9 @@ fun PrintLogEditScreen(
                     )
                     onSaveComplete()
                 },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = nozzleTemp.isNotBlank() && bedTemp.isNotBlank()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save Print Log")
+                Text("Save Log")
             }
         }
     }

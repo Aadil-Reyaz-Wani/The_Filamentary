@@ -2,8 +2,9 @@ package com.kashmir.thefilamentary.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
@@ -40,19 +41,14 @@ fun FilamentListScreen(
     
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Filament Inventory") },
+            CenterAlignedTopAppBar(
+                title = { Text("Home") },
                 actions = {
                     IconButton(onClick = onSettingsClick) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = onAddFilamentClick) {
-                Icon(Icons.Default.Add, contentDescription = "Add Filament")
-            }
         }
     ) { paddingValues ->
         Column(
@@ -60,40 +56,88 @@ fun FilamentListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            Text(
+                text = "Your Filament Shelf",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+
+            // Quick actions row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                FilledTonalButton(
+                    onClick = onAddFilamentClick,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Add Filament")
+                }
+                FilledTonalButton(
+                    onClick = { /* Navigate to Add Print Log flow if available */ },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    enabled = filaments.isNotEmpty()
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Add Print Log")
+                }
+            }
+            
             // Summary stats
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                Column(
+                Row(
                     modifier = Modifier
                         .padding(16.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Total Spools: $filamentCount",
-                        style = MaterialTheme.typography.titleMedium
+                        text = "Total Spools",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "$filamentCount",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
             
-            // Filament list
+            // Filament grid
             if (filaments.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No filaments added yet.\nTap the + button to add one.",
+                        text = "No filaments yet. Tap Add Filament.",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
             } else {
-                LazyColumn(
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 160.dp),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(filaments) { filament ->
                         FilamentItem(
@@ -112,10 +156,13 @@ fun FilamentItem(
     filament: Filament,
     onClick: () -> Unit
 ) {
-    Card(
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Column(
             modifier = Modifier
@@ -132,9 +179,17 @@ fun FilamentItem(
                 text = "${filament.material} - ${filament.color}",
                 style = MaterialTheme.typography.bodyMedium
             )
+            Spacer(modifier = Modifier.height(12.dp))
+            val progress = (filament.currentWeightGrams.toFloat() / filament.initialWeightGrams.toFloat()).coerceIn(0f, 1f)
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primaryContainer
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Current Weight: ${filament.currentWeightGrams}g / ${filament.initialWeightGrams}g",
+                text = "${filament.currentWeightGrams}g remaining / ${filament.initialWeightGrams}g",
                 style = MaterialTheme.typography.bodySmall
             )
         }
